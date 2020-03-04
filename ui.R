@@ -2,6 +2,9 @@ dashboardPage(
     dashboardHeader(disable = TRUE),
     dashboardSidebar(disable = TRUE),
     dashboardBody(
+        tags$head(
+            tags$link(rel = "stylesheet", type = "text/css", href = "css/custom.css")
+        ),
         tags$div(
             style = "position: absolute; width: 100%; left: 0; z-index: 0; height: 90vh;", 
             mapwrdl
@@ -14,14 +17,19 @@ dashboardPage(
             ),
         
         fluidRow(
-            valueBox(10 * 2, "New Orders", icon = icon("credit-card")),
-            valueBox(10 * 2, "New Orders", icon = icon("credit-card")),
-            valueBox(10 * 2, "New Orders", icon = icon("credit-card"))
+            valueBox(width = 3, 10 * 2, "New Orders", icon = icon("credit-card")),
+            valueBox(width = 3, 10 * 2, "New Orders", icon = icon("credit-card")),
+            valueBox(width = 3, 10 * 2, "New Orders", icon = icon("credit-card")),
+            valueBox(width = 3, 10 * 2, "New Orders", icon = icon("credit-card"))
         ),
+        
         fluidRow(
-            box(title = "Title 1", width = 4, solidHeader = TRUE, status = "primary", "Box content"),
-            box(title = "Title 1", width = 4, solidHeader = TRUE, status = "primary", "Box content"),
-            box(title = "Title 1", width = 4, solidHeader = TRUE, status = "primary", "Box content")
+            column(width = 4, highcharts_demo()),
+            column(width = 4, highcharts_demo()),
+            column(width = 4, highcharts_demo())
+            # box(title = "Title 1", width = 4, solidHeader = TRUE, status = "primary", "Box content"),
+            # box(title = "Title 1", width = 4, solidHeader = TRUE, status = "primary", "Box content"),
+            # box(title = "Title 1", width = 4, solidHeader = TRUE, status = "primary", "Box content")
         ),
         
     )

@@ -11,6 +11,9 @@ mapwrdl <- hcmap(showInLegend = FALSE) %>%
   hc_size(height = "90vh") %>%
   hc_elementId("worldmap")
 
+
+# options(hc_add_annotation())
+
 countries <- tradestatistics::ots_countries %>% 
   mutate(
     iso2 = countrycode(country_iso, origin = "iso3c", destination = "iso2c")    
@@ -27,4 +30,5 @@ cntnt <- countries %>%
     
   })
 
-str(cntnt)
+
+

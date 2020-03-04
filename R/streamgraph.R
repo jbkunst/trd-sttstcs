@@ -1,12 +1,11 @@
 library(tradestatistics)
 library(tidyverse)
 
-country <- "chl"
+country <- "kor"
 
 system.time({
   d <- tradestatistics::ots_create_tidy_data(years = 1962:2018, reporters = country, table = "yrc", include_communities = TRUE)  
 })
-
 
 glimpse(d)
 
