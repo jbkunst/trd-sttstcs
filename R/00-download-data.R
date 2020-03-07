@@ -3,7 +3,7 @@ library(tidyverse)
 library(furrr)
 library(economiccomplexity)
 
-plan(multiprocess(workers = 6))
+plan(multiprocess(workers = 3))
 
 tradestatistics::ots_countries$country_iso %>% 
   str_subset("-", negate = TRUE) %>% 
@@ -66,3 +66,31 @@ data_yr <- data_yrc %>%
 
 data_yrc
 data_yr
+
+
+
+# yrcp --------------------------------------------------------------------
+tradestatistics::ots_countries$country_iso %>% 
+  str_subset("-", negate = TRUE) %>% 
+  setdiff(c("all", "arb", "tmp")) %>% 
+  future_map(function(ciso = "arb"){
+    
+    message(ciso)
+    
+    fout <- paste0("data/country-partner/", ciso, ".rds")
+    
+    if(file.exists(fout)) return(TRUE)
+    
+    d <- tradestatistics::ots_create_tidy_data(years = 1962:2018, reporters = ciso, partners = "all", table = "yrpc", include_communities = TRUE)
+    
+    d <- d %>% 
+      group_by(year, community_name, reporter_iso, partner_iso) %>% 
+      summarise_at(vars(export_value_usd, import_value_usd), sum) %>% 
+      ungroup()
+    
+    d
+    
+    saveRDS(d, fout, compress = "xz")
+    
+  })
+
