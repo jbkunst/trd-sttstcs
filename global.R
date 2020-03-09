@@ -1,3 +1,4 @@
+# packages ----------------------------------------------------------------
 library(shiny)
 library(shinydashboard)
 library(highcharter)
@@ -7,18 +8,23 @@ library(dplyr)
 library(countrycode)
 library(shinyWidgets)
 
+
+# data --------------------------------------------------------------------
+data_yrpc <- readRDS("data/yrpc.rds")
+data_yr   <- readRDS("data/yr.rds")
+
+colors <- tradestatistics::ots_communities %>% 
+  distinct(community_name, community_color) %>% 
+  add_row(community_name = "Others", community_color = "#d3d3d3")
+
+countries <- tradestatistics::ots_countries %>% 
+  mutate(iso2 = countrycode(country_iso, origin = "iso3c", destination = "iso2c")) %>% 
+  filter(!is.na(iso2)) %>% 
+  semi_join(data_yr, by = c("country_iso" = "reporter_iso"))
+  
 mapwrdl <- hcmap(showInLegend = FALSE) %>%
   hc_size(height = "90vh") %>%
   hc_elementId("worldmap")
-
-
-# options(hc_add_annotation())
-
-countries <- tradestatistics::ots_countries %>% 
-  mutate(
-    iso2 = countrycode(country_iso, origin = "iso3c", destination = "iso2c")    
-  ) %>% 
-  filter(!is.na(iso2))
 
 cntnt <- countries %>% 
   select(country = country_name_english, iso2) %>% 
@@ -29,6 +35,4 @@ cntnt <- countries %>%
     as.character(HTML(paste(tags$img(src = urlflag, width=20, height=15), country)))
     
   })
-
-
 
