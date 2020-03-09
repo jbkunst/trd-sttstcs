@@ -43,7 +43,10 @@ data_yr <- data_yrpc %>%
       complexity_index_country = com$complexity_index_country
       )
     
-    dot
+    dot <- dot %>% 
+      mutate(
+        complexity_index_country = (complexity_index_country - mean(complexity_index_country))/sd(complexity_index_country)
+      )
 
     dux %>%
       group_by(year, reporter_iso) %>%
