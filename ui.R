@@ -30,9 +30,10 @@ dashboardPage(
         ),
         
         fluidRow(
-            valueBoxOutput("vb_export", 4),
-            valueBoxOutput("vb_import", 4),
-            valueBoxOutput("vb_pci", 4)
+            valueBoxOutput("vb_export", 3),
+            valueBoxOutput("vb_import", 3),
+            valueBoxOutput("vb_trade", 3),
+            valueBoxOutput("vb_pci", 3)
         ),
         
         fluidRow(
@@ -44,9 +45,6 @@ dashboardPage(
                     highcharts_demo()
                     )
                 )
-            # box(title = "Title 1", width = 4, solidHeader = TRUE, status = "primary", "Box content"),
-            # box(title = "Title 1", width = 4, solidHeader = TRUE, status = "primary", "Box content"),
-            # box(title = "Title 1", width = 4, solidHeader = TRUE, status = "primary", "Box content")
         ),
         
     )

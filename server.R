@@ -115,6 +115,30 @@ shinyServer(function(input, output) {
     
   })
   
+  output$vb_trade <- renderValueBox({
+    
+    dyr <- dyr()
+    
+    d <- dyr %>% 
+      mutate(trade_balance = export_value_usd - import_value_usd) %>% 
+      select(year, trade_balance) %>% 
+      mutate(trade_balance = round(trade_balance/1e9, 2)) %>% 
+      select(x = year, y = trade_balance)
+    
+    lbl <- d %>% pull(y) %>% last() %>% comma() %>% paste0("USD $", .," B") 
+    
+    hc <- hc_spark(d, color = "white", prefix = "USD $ ", suffix = " B", type = "area")
+    
+    valueBoxSpark(
+      value = lbl,
+      subtitle = "Trade Balance",
+      color = "black",
+      spark = hc,
+      minititle = "Trade balance in 2018"
+    )
+    
+  })
+  
   output$vb_pci <- renderValueBox({
     
     dyr <- dyr()
