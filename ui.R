@@ -12,7 +12,7 @@ dashboardPage(
         
         fluidRow(
             column(
-                width = 6,
+                width = 4,
                 pickerInput(
                     "country", NULL, multiple = FALSE,
                     choices = pull(countries, country_name_english),
@@ -20,21 +20,30 @@ dashboardPage(
                     )
                 ),
             column(
-                width = 6,
+                width = 4,
                 sliderInput("percent", NULL, min = .5, max = 0.99, round = TRUE, value = 0.8)
+            ),
+            column(
+                width = 4,
+                sliderInput("since_year", NULL, min = 1962, max = 1990, value = 1990)
             )
         ),
         
         fluidRow(
-            valueBox(width = 4, 10 * 2, "New Orders", icon = icon("credit-card")),
-            valueBox(width = 4, 10 * 2, "New Orders", icon = icon("credit-card")),
-            valueBox(width = 4, 10 * 2, "New Orders", icon = icon("credit-card"))
+            valueBoxOutput("vb_export", 4),
+            valueBoxOutput("vb_import", 4),
+            valueBoxOutput("vb_pci", 4)
         ),
         
         fluidRow(
-            column(width = 4, highchartOutput("stream")),
-            column(width = 4, highcharts_demo()),
-            column(width = 4, highcharts_demo())
+            column(width = 6, highchartOutput("stream")),
+            fluidRow(
+                column(
+                    width = 6,
+                    highcharts_demo(),
+                    highcharts_demo()
+                    )
+                )
             # box(title = "Title 1", width = 4, solidHeader = TRUE, status = "primary", "Box content"),
             # box(title = "Title 1", width = 4, solidHeader = TRUE, status = "primary", "Box content"),
             # box(title = "Title 1", width = 4, solidHeader = TRUE, status = "primary", "Box content")

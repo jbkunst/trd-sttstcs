@@ -1,4 +1,4 @@
-# input <- list(country = "Chile", percent = 0.8)
+# input <- list(country = "Chile", percent = 0.8, since_year = 1990)
 
 shinyServer(function(input, output) {
 
@@ -9,7 +9,8 @@ shinyServer(function(input, output) {
     dyr <- countries %>% 
       filter(country_name_english == input$country) %>% 
       select(reporter_iso = country_iso) %>% 
-      inner_join(data_yr, by = "reporter_iso")
+      inner_join(data_yr, by = "reporter_iso") %>% 
+      filter(year >= input$since_year)
     
     dyr
     
@@ -22,7 +23,8 @@ shinyServer(function(input, output) {
     dyrpc <- countries %>% 
       filter(country_name_english == input$country) %>% 
       select(reporter_iso = country_iso) %>% 
-      inner_join(data_yrpc, by = "reporter_iso")
+      inner_join(data_yrpc, by = "reporter_iso") %>% 
+      filter(year >= input$since_year)
     
     dyrpc
     
@@ -62,10 +64,78 @@ shinyServer(function(input, output) {
       hc_colors(cols) %>% 
       hc_yAxis(visible = FALSE) %>% 
       hc_tooltip(table = TRUE, sort = TRUE) %>% 
-      hc_plotOptions(series = list(animation = list(duration = 5000)))
+      hc_plotOptions(series = list(animation = list(duration = 5000))) %>% 
+      hc_size(height = "100vh")
     
   })
   
+  output$vb_export <- renderValueBox({
+    
+    dyr <- dyr()
+    
+    d <- dyr %>% 
+      select(year, export_value_usd) %>% 
+      mutate(export_value_usd = round(export_value_usd/1e9, 2)) %>% 
+      select(x = year, y = export_value_usd)
+    
+    lbl <- d %>% pull(y) %>% last() %>% comma() %>% paste0("USD $", .," B") 
+    
+    hc <- hc_spark(d, color = "white", prefix = "USD $ ", suffix = " B", type = "area")
+    
+    valueBoxSpark(
+      value = lbl,
+      subtitle = "Exports",
+      color = "black",
+      spark = hc,
+      minititle = "Exports value in 2018"
+    )
+    
+  })
   
+  output$vb_import <- renderValueBox({
+    
+    dyr <- dyr()
+    
+    d <- dyr %>% 
+      select(year, import_value_usd) %>% 
+      mutate(import_value_usd = round(import_value_usd/1e9, 2)) %>% 
+      select(x = year, y = import_value_usd)
+    
+    lbl <- d %>% pull(y) %>% last() %>% comma() %>% paste0("USD $", .," B") 
+    
+    hc <- hc_spark(d, color = "white", prefix = "USD $ ", suffix = " B", type = "area")
+    
+    valueBoxSpark(
+      value = lbl,
+      subtitle = "Imports",
+      color = "black",
+      spark = hc,
+      minititle = "Import value in 2018"
+    )
+    
+  })
+  
+  output$vb_pci <- renderValueBox({
+    
+    dyr <- dyr()
+    
+    d <- dyr %>% 
+      select(year, complexity_index_country) %>% 
+      mutate(complexity_index_country = round(complexity_index_country, 2)) %>%
+      select(x = year, y = complexity_index_country)
+    
+    lbl <- d %>% pull(y) %>% last() %>% round(2)
+    
+    hc <- hc_spark(d, color = "white", prefix = "CI ", suffix = "", type = "area")
+    
+    valueBoxSpark(
+      value = lbl,
+      color = "black",
+      subtitle = "Complexity Index",
+      spark = hc,
+      minititle = "CCI in 2018"
+    )
+    
+  })
   
 })

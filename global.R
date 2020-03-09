@@ -7,7 +7,9 @@ library(purrr)
 library(dplyr)
 library(countrycode)
 library(shinyWidgets)
+library(scales)
 
+source("R/99-shiny-helpers.R")
 
 # data --------------------------------------------------------------------
 data_yrpc <- readRDS("data/yrpc.rds")
