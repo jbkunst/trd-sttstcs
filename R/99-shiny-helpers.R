@@ -1,40 +1,59 @@
-hc_spark <- function(d, height = 100, color = 'rgba(255,255,255,0.55)',
-                     suffix = "", prefix = "", type = "line", ...) {
+hc_theme_sparkline2 <- function(...) {
   
-  highchart() %>% 
-    hc_add_series(
-      zIndex = 5,
-      data = list_parse2(d),
-      color = color,
-      type = type,
-      lineWidth = 2.4,
-      marker = list(enabled = FALSE),
-      showInLegend = FALSE,
-      fillColor = list(
-        linearGradient = c(0, 0, 0, 300),
-        stops = list(
-          list(0, 'rgba(255,255,255,0.45)'),
-          list(1, 'rgba(255,255,255,0.05)')
-        )
+  theme <- list(
+    chart = list(
+      backgroundColor = NULL,
+      margins = c(0, 0, 0, 0),
+      spacingTop = 0,
+      spacingRight = 0,
+      spacingBottom = 0,
+      spacingLeft = 0,
+      plotBorderWidth = 0,
+      borderWidth = 0,
+      style = list(
+        overflow = "visible"
       ),
-      ...
-    ) %>% 
-    hc_tooltip(
-      zIndex = 100,
+      skipClone = TRUE
+    ),
+    xAxis = list(
+      visible = FALSE, 
+      endOnTick = FALSE, 
+      startOnTick = FALSE
+    ),
+    yAxis = list(
+      visible = FALSE,
+      endOnTick = FALSE, 
+      startOnTick = FALSE
+    ),
+    tooltip = list(
+      outside = TRUE,
       headerFormat = "",
-      pointFormat = "{point.x}: <b>{point.y}</b>",
-      valueSuffix = suffix,
-      valuePrefix = prefix
-    ) %>% 
-    hc_xAxis(visible = FALSE) %>% 
-    hc_yAxis(visible = FALSE, endOnTick = FALSE, startOnTick = FALSE) %>% 
-    hc_size(height = height) %>% 
-    hc_chart(margins = c(0, 0, 0, 0))
+      pointFormat = "{point.x}: <b>{point.y}</b>"
+    ),
+    plotOptions = list(
+      series = list(
+        marker = list(enabled = FALSE),
+        lineWidth = 1,
+        shadow = FALSE,
+        fillOpacity = 0.25
+      )
+    )
+  )
   
+  theme <- structure(theme, class = "hc_theme")
+  
+  if (length(list(...)) > 0) {
+    theme <- hc_theme_merge(
+      theme,
+      hc_theme(...)
+    )
+  }
+  
+  theme
 }
 
 valueBoxSpark <- function(value, subtitle, icon = NULL, color = "aqua", 
-                          width = 4, href = NULL, spark = NULL, minititle = NULL) {
+                          width = 4, href = NULL, spark = NULL, height_spark = "100px",minititle = NULL) {
   
   shinydashboard:::validateColor(color)
   
@@ -47,8 +66,9 @@ valueBoxSpark <- function(value, subtitle, icon = NULL, color = "aqua",
       class = "inner",
       if(!is.null(minititle)) tags$small(minititle),
       h3(value),
-      spark,
-      p(subtitle)
+      # tags$span(style = paste0("height:", height_spark), hc_size(spark, height = "100vh")),
+      tags$span(hc_size(spark, height = height_spark)),
+      if (!is.null(subtitle)) p(subtitle)
       ),
     if (!is.null(icon)) div(class = "icon-large", icon)
     )

@@ -38,3 +38,7 @@ cntnt <- countries %>%
     
   })
 
+PARS <- list(
+  sparkline_color = "lightgray"
+)
+

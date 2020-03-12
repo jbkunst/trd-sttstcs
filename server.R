@@ -36,7 +36,6 @@ shinyServer(function(input, output) {
     
     # main communities via sum(export_value_usd)
     # then regroup the new communities in the yr data
-    # 
     daux1 <- daux %>% 
       group_by(community_name) %>% 
       summarise(export_value_usd = sum(export_value_usd)) %>% 
@@ -59,9 +58,31 @@ shinyServer(function(input, output) {
       summarise(export_value_usd = sum(export_value_usd)) %>% 
       ungroup() %>% 
       mutate(community_name2 = factor(community_name2, levels = unique(pull(daux1, community_name2))))
+    
+    subtitle <- daux %>% 
+      filter(year == max(year)) %>% 
+      mutate(perc = percent(export_value_usd/sum(export_value_usd))) %>% 
+      arrange(desc(export_value_usd)) %>% 
+      filter(community_name2 != "Others", community_name2 != "Unspecified") %>% 
+      head(3) %>% 
+      left_join(colors, by = c("community_name2" = "community_name")) %>% 
+      mutate(
+        sep = case_when(
+          row_number() == 1 ~ "",
+          row_number() == dplyr::n() ~ " and ",
+          TRUE ~ ", "
+        ),
+        txt = stringr::str_glue("{sep}<strong><span style='color: {community_color}'>{community_name2}</span></strong> ({perc})")
+      ) %>% 
+      summarise(paste0(txt, collapse = "")) %>% 
+      pull() %>% 
+      stringr::str_c("Most exported products in 2018 are ", .)
+    
         
     hchart(daux, "streamgraph", hcaes(year, export_value_usd, group = community_name2)) %>% 
       hc_colors(cols) %>% 
+      hc_title(text = "Most Exported products by year") %>% 
+      hc_subtitle(text = subtitle, useHTML = TRUE) %>% 
       hc_yAxis(visible = FALSE) %>% 
       hc_tooltip(table = TRUE, sort = TRUE) %>% 
       hc_plotOptions(series = list(animation = list(duration = 5000))) %>% 
@@ -80,7 +101,21 @@ shinyServer(function(input, output) {
     
     lbl <- d %>% pull(y) %>% last() %>% comma() %>% paste0("USD $", .," B") 
     
-    hc <- hc_spark(d, color = "white", prefix = "USD $ ", suffix = " B", type = "area")
+    hc <- hchart(d, "area", color = PARS$sparkline_color) %>% 
+      hc_add_theme(hc_theme_sparkline2()) %>% 
+      hc_tooltip(valuePrefix = "USD $ ", valueSuffix = " B") %>% 
+      hc_plotOptions(
+        series = list(
+          color = PARS$sparkline_color,
+          fillColor = list(
+            linearGradient = list(x1 = 0, y1 = 1, x2 = 0, y2 = 0),
+            stops = list(
+              list(0.0, "transparent"),
+              list(1.0, PARS$sparkline_color)
+            )
+          )
+        )
+      )
     
     valueBoxSpark(
       value = lbl,
@@ -103,7 +138,21 @@ shinyServer(function(input, output) {
     
     lbl <- d %>% pull(y) %>% last() %>% comma() %>% paste0("USD $", .," B") 
     
-    hc <- hc_spark(d, color = "white", prefix = "USD $ ", suffix = " B", type = "area")
+    hc <- hchart(d, "area", color = PARS$sparkline_color) %>% 
+      hc_add_theme(hc_theme_sparkline2()) %>% 
+      hc_tooltip(valuePrefix = "USD $ ", valueSuffix = " B") %>% 
+      hc_plotOptions(
+        series = list(
+          color = PARS$sparkline_color,
+          fillColor = list(
+            linearGradient = list(x1 = 0, y1 = 1, x2 = 0, y2 = 0),
+            stops = list(
+              list(0.0, "transparent"),
+              list(1.0, PARS$sparkline_color)
+            )
+          )
+        )
+      )
     
     valueBoxSpark(
       value = lbl,
@@ -115,31 +164,31 @@ shinyServer(function(input, output) {
     
   })
   
-  output$vb_trade <- renderValueBox({
+  output$vb_expdiv <- renderValueBox({
     
     dyr <- dyr()
     
     d <- dyr %>% 
-      mutate(trade_balance = export_value_usd - import_value_usd) %>% 
-      select(year, trade_balance) %>% 
-      mutate(trade_balance = round(trade_balance/1e9, 2)) %>% 
-      select(x = year, y = trade_balance)
+      select(year, export_value_usd_diversity) %>% 
+      mutate(export_value_usd_diversity = round(export_value_usd_diversity, 3)) %>% 
+      select(x = year, y = export_value_usd_diversity)
     
-    lbl <- d %>% pull(y) %>% last() %>% comma() %>% paste0("USD $", .," B") 
+    lbl <- d %>% pull(y) %>% last() %>% round(3)
     
-    hc <- hc_spark(d, color = "white", prefix = "USD $ ", suffix = " B", type = "area")
+    hc <- hchart(d, "line", color = PARS$sparkline_color) %>% 
+      hc_add_theme(hc_theme_sparkline2()) 
     
     valueBoxSpark(
       value = lbl,
-      subtitle = "Trade Balance",
+      subtitle = "Export Diversity",
       color = "black",
       spark = hc,
-      minititle = "Trade balance in 2018"
+      minititle = "Simpson's Diversity Index in 2018"
     )
     
   })
   
-  output$vb_pci <- renderValueBox({
+  output$vb_pcompx <- renderValueBox({
     
     dyr <- dyr()
     
@@ -150,14 +199,15 @@ shinyServer(function(input, output) {
     
     lbl <- d %>% pull(y) %>% last() %>% round(2)
     
-    hc <- hc_spark(d, color = "white", prefix = "CI ", suffix = "", type = "area")
+    hc <- hchart(d, "line", color = PARS$sparkline_color) %>% 
+      hc_add_theme(hc_theme_sparkline2())
     
     valueBoxSpark(
       value = lbl,
       color = "black",
-      subtitle = "Complexity Index",
+      subtitle = "Complexity",
       spark = hc,
-      minititle = "CCI in 2018"
+      minititle = "Country Complity Index in 2018"
     )
     
   })

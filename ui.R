@@ -32,20 +32,16 @@ dashboardPage(
         fluidRow(
             valueBoxOutput("vb_export", 3),
             valueBoxOutput("vb_import", 3),
-            valueBoxOutput("vb_trade", 3),
-            valueBoxOutput("vb_pci", 3)
+            valueBoxOutput("vb_expdiv", 3),
+            valueBoxOutput("vb_pcompx", 3)
         ),
         
         fluidRow(
-            column(width = 6, highchartOutput("stream")),
-            fluidRow(
-                column(
-                    width = 6,
-                    highcharts_demo(),
-                    highcharts_demo()
-                    )
+            column(width = 8, highchartOutput("stream", height = "700px")),
+            column(width = 4,
+                   column(width = 12, highcharts_demo() %>% hc_size(height = 350) %>% hc_title(text = "")),
+                   column(width = 12, highcharts_demo() %>% hc_size(height = 350) %>% hc_title(text = ""))
                 )
-        ),
-        
+            ),
+        )
     )
-)

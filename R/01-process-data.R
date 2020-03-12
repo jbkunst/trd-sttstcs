@@ -25,6 +25,7 @@ data_yr <- data_yrpc %>%
 
     message(y)
 
+    # AUXLIAR DATA
     dux <- data_yrpc %>%
       filter(year == y) %>% 
       group_by(year, reporter_iso, community_name) %>%
@@ -34,26 +35,47 @@ data_yr <- data_yrpc %>%
         ) %>%
       filter(TRUE)
 
+    # COMPLEXITY
     rca <- balassa_index(dux, country = "reporter_iso", product = "community_name", value = "export_value_usd", discrete = TRUE)
 
     com <- complexity_measures(rca)
 
-    dot <- tibble(
+    dcx <- tibble(
       reporter_iso = names(com$complexity_index_country),
       complexity_index_country = com$complexity_index_country
       )
     
-    dot <- dot %>% 
+    dcx <- dcx %>% 
       mutate(
         complexity_index_country = (complexity_index_country - mean(complexity_index_country))/sd(complexity_index_country)
       )
 
-    dux %>%
+    # DIVERSITY
+    # x <- c(100, 100, 100, 100)
+    # x <- c(100, 100, 100, 90000)
+    # 1 - sum((x/sum(x))^2
+    div <- dux %>% 
+      group_by(reporter_iso) %>% 
+      summarise_at(
+        vars(export_value_usd, import_value_usd),
+        .funs = list(diversity = function(x) 1 - sum((x/sum(x))^2))
+        )
+    
+
+    # JOIN 
+    dout <- dux %>%
       group_by(year, reporter_iso) %>%
-      summarise_at(vars(export_value_usd, import_value_usd), sum) %>%
-      ungroup() %>% 
-      left_join(dot, by = "reporter_iso") %>% 
+      summarise_at(vars(export_value_usd, import_value_usd), sum) %>% 
+      ungroup() 
+    
+    dout <- dout %>%
+      left_join(dcx, by = "reporter_iso") %>% 
       mutate_if(is.numeric, replace_na, 0)
+    
+    dout <- dout %>%
+      left_join(div, by = "reporter_iso")
+    
+    dout
 
   })
 
