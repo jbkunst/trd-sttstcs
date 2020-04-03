@@ -79,3 +79,18 @@ valueBoxSpark <- function(value, subtitle, icon = NULL, color = "aqua",
   div(class = if (!is.null(width)) 
     paste0("col-sm-", width), boxContent)
 }
+
+iso3_to_flag_n_name <- function(country_iso = c("aus", "chl")) {
+  
+  tibble(country_iso = country_iso) %>% 
+    left_join(countries %>% select(country_iso, country_name_english, iso2), by = "country_iso") %>% 
+    select(country = country_name_english, iso2) %>% 
+    pmap_chr(function(country = "Australia", iso2 = "au") {
+      
+      urlflag <- paste0("https://cdn.rawgit.com/lipis/flag-icon-css/master/flags/4x3/", tolower(iso2), ".svg")
+      
+      as.character(HTML(paste(tags$img(src = urlflag), country)))
+      
+    })
+  
+}

@@ -1,4 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Serif&display=swap');
+
+/* System Fonts as used by GitHub */
+/* https://css-tricks.com/snippets/css/system-font-stack/ */
 body {
-  color: #454545;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
+
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6, p {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.specialfont {
+  font-family: 'PT Serif', serif;
+}
+
+/* https://stackoverflow.com/questions/10085723/twitter-bootstrap-add-top-space-between-rows */
+.top-buffer {
+  margin-top: 75px; 
+}
+
+/* conent wraper background-color is #ecf0f5, so: https://www.color-hex.com/color/ecf0f5 */
+.dropdown-menu { 
+  background-color: #ecf0f5;
+  border-color: #a5a8ab;
+  padding: 15px;
+}
+
+
+/* main selector */
+.filter-option-inner-inner {
+  font-size: 48px;
+  font-family: 'PT Serif', serif;
+}
+
+.filter-option-inner-inner > img {
+  width: 36px;
+  vertical-align: baseline;
+}
+
+img {
+  width: 20px;
+}
+
+/* valueboxes */
+.small-box {
+  color: #333333!important;
+  box-shadow: 0 5px 5px rgba(0,0,0,.1);
+}
+
+.bg-black {
+  background-color: #11111100!important;
+}
+
+/* button */
+.btn-customstatus {
+  background: #746D69;
+}
+
+.btn-info {
+    background-color: #746D69;
+    border-color: #746D69;
+}
+
+.btn-info:hover, .btn-info.active, .btn-info:active, .open>.dropdown-toggle.btn-info,
+.btn-info.active.focus, .btn-info.active:focus, .btn-info.active:hover, .btn-info:active.focus, .btn-info:active:focus, .btn-info:active:hover, .open>.dropdown-toggle.btn-info.focus, .open>.dropdown-toggle.btn-info:focus, .open>.dropdown-toggle.btn-info:hover {
+    background-color: #ACADA8;
+    border-color: #ACADA8;
+}
+
+/* range input */
+.irs-bar {
+    border-top: 1px solid #746D69;
+    border-bottom: 1px solid #746D69;
+    background: #746D69;
+}
+
+.irs-from, .irs-to, .irs-single {
+    background: #746D69;
+}
+
+.irs-bar-edge {
+    border: 1px solid #746D69;
+    background: #746D69;
+}
+

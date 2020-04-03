@@ -7,7 +7,9 @@ plan(multiprocess(workers = 3))
 tradestatistics::ots_countries$country_iso %>% 
   str_subset("-", negate = TRUE) %>% 
   setdiff(c("all", "arb", "tmp")) %>% 
-  future_map_dfr(function(ciso = "arb"){
+  sample() %>% 
+  walk(function(ciso = "arb"){
+  # future_map_dfr(function(ciso = "arb"){
     
     message(ciso)
     
@@ -27,3 +29,31 @@ tradestatistics::ots_countries$country_iso %>%
     saveRDS(d, fout, compress = "xz")
     
   })
+
+
+# data for treemaps -------------------------------------------------------
+dyrc2018 <- ots_create_tidy_data(
+  years = 2018,
+  reporters = "all",
+  partners = "all",
+  include_shortnames = TRUE,
+  include_communities = TRUE,
+  table = "yrc"
+)
+
+glimpse(dyrc2018)
+
+dyrc2018 <- dyrc2018 %>% 
+  select(
+    community_name, community_color,
+    product_shortname_english,
+    reporter_iso, reporter_fullname_english,
+    export_value_usd, import_value_usd) 
+
+distinct(dyrc2018)
+
+saveRDS(dyrc2018, "data/yrc2018.rds")
+
+
+
+
