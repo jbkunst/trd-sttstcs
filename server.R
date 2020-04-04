@@ -144,7 +144,7 @@ shinyServer(function(input, output, session) {
     daux <- daux %>% 
       select(-community_color) %>% 
       left_join(daux1, by = "community_name") %>% 
-      mutate(product_shortname_english2 = ifelse(community_name2 == "Others", "Other prodcuts", product_shortname_english)) %>% 
+      mutate(product_shortname_english2 = ifelse(community_name2 == "Others", "Other products", product_shortname_english)) %>% 
       group_by(community_name2, community_color, product_shortname_english2) %>% 
       summarise(export_value_usd = sum(export_value_usd)) %>% 
       ungroup() %>% 
@@ -152,7 +152,7 @@ shinyServer(function(input, output, session) {
       group_by(community_name2) %>% 
       mutate(
         cumshare = cumsum(export_value_usd)/sum(export_value_usd),
-        product_shortname_english2 = ifelse(cumshare <= input$percent/100 | row_number() <= 1, product_shortname_english2, "Other prodcuts")
+        product_shortname_english2 = ifelse(cumshare <= input$percent/100 | row_number() <= 1, product_shortname_english2, "Other products")
       ) %>% 
       ungroup() %>% 
       group_by(community_name2, community_color, product_shortname_english2) %>% 
@@ -487,7 +487,7 @@ shinyServer(function(input, output, session) {
       color = "black",
       subtitle = "Complexity",
       spark = hc,
-      minititle = "Country Complity Index in 2018"
+      minititle = "Country Complexity Index in 2018"
     )
     
   })

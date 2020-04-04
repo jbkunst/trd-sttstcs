@@ -20,7 +20,7 @@ PARS <- list(
 options(
   highcharter.google_fonts = FALSE,
   highcharter.debug = PARS$debug,
-  shiny.launch.browser = PARS$debug,
+  # shiny.launch.browser = PARS$debug,
   highcharter.theme = 
     hc_theme_smpl(
       title = list(style = list(fontSize = "1.2em", fontFamily = PARS$font)),

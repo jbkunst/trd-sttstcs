@@ -1,0 +1,12 @@
+name: trd-sttstcs
+title: trd-sttstcs
+username:
+account: jbkunst
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2049057
+bundleId: 2963129
+url: https://jbkunst.shinyapps.io/trd-sttstcs/
+when: 1585898980.60759
+asMultiple: FALSE
+asStatic: FALSE
