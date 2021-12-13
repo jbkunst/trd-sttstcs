@@ -8,7 +8,8 @@ library(dplyr)
 library(shinyWidgets)
 library(scales)
 
-source("R/99-shiny-helpers.R")
+# options(shiny.autoload.r=FALSE)
+source("R-scripts/99-shiny-helpers.R")
 
 PARS <- list(
   debug = FALSE,
