@@ -10,14 +10,27 @@ shinyServer(function(input, output, session) {
   #   choicesOpt = list(content =  pull(dfsrt, cntnt))  
   # )
   
-  dyr <- reactive({
+  reac_iso <- reactive({
     
     validate(need(input$country != "", ""))
     
-    dyr <- countries %>% 
+    reac_iso <- countries %>% 
       filter(country_name_english == input$country) %>% 
       select(reporter_iso = country_iso) %>% 
-      inner_join(data_yr, by = "reporter_iso") %>% 
+      pull(reporter_iso)
+    
+    reac_iso
+    
+    
+  })
+  
+  dyr <- reactive({
+    
+    reac_iso <- reac_iso()
+    
+    dyr <- data_yr %>% 
+      filter(reporter_iso == reac_iso) %>% 
+      collect() %>% 
       filter(as.numeric(input$since_to_year[1]) <= year, year <=  as.numeric(input$since_to_year[2]))
     
     dyr
@@ -26,12 +39,11 @@ shinyServer(function(input, output, session) {
   
   dyrpc <- reactive({
     
-    validate(need(input$country != "", ""))
+    reac_iso <- reac_iso()
     
-    dyrpc <- countries %>% 
-      filter(country_name_english == input$country) %>% 
-      select(reporter_iso = country_iso) %>% 
-      inner_join(data_yrpc, by = "reporter_iso") %>% 
+    dyrpc <-  data_yrpc %>%
+      filter(reporter_iso == reac_iso) %>% 
+      collect() %>% 
       filter(as.numeric(input$since_to_year[1]) <= year, year <=  as.numeric(input$since_to_year[2]))
     
     dyrpc
@@ -40,12 +52,11 @@ shinyServer(function(input, output, session) {
   
   drc <- reactive({
     
-    validate(need(input$country != "", ""))
+    reac_iso <- reac_iso()
     
-    drc <- countries %>% 
-      filter(country_name_english == input$country) %>% 
-      select(reporter_iso = country_iso) %>% 
-      inner_join(data_yrc, by = "reporter_iso") 
+    drc <- data_yrc %>%
+      filter(reporter_iso == reac_iso) %>% 
+      collect()
     
     drc
     
@@ -76,8 +87,7 @@ shinyServer(function(input, output, session) {
     daux <- daux %>% 
       left_join(daux1, by = "community_name") %>% 
       group_by(year, community_name2) %>% 
-      summarise(export_value_usd = sum(export_value_usd)) %>% 
-      ungroup() %>% 
+      summarise(export_value_usd = sum(export_value_usd), .groups = "drop") %>% 
       mutate(community_name2 = factor(community_name2, levels = unique(pull(daux1, community_name2))))
     
     subtitle <- daux %>% 
@@ -101,7 +111,6 @@ shinyServer(function(input, output, session) {
       pull() %>% 
       stringr::str_c("Most exported historically products are ", .)
     
-        
     hchart(daux, "streamgraph", hcaes(year, export_value_usd, group = community_name2)) %>% 
       hc_colors(cols) %>% 
       hc_title(text = "Most Exported products by year") %>% 
@@ -146,8 +155,7 @@ shinyServer(function(input, output, session) {
       left_join(daux1, by = "community_name") %>% 
       mutate(product_shortname_english2 = ifelse(community_name2 == "Others", "Other products", product_shortname_english)) %>% 
       group_by(community_name2, community_color, product_shortname_english2) %>% 
-      summarise(export_value_usd = sum(export_value_usd)) %>% 
-      ungroup() %>% 
+      summarise(export_value_usd = sum(export_value_usd), .groups = "drop") %>% 
       arrange(community_name2, desc(export_value_usd)) %>% 
       group_by(community_name2) %>% 
       mutate(
@@ -156,8 +164,7 @@ shinyServer(function(input, output, session) {
       ) %>% 
       ungroup() %>% 
       group_by(community_name2, community_color, product_shortname_english2) %>% 
-      summarise(export_value_usd = sum(export_value_usd)) %>% 
-      ungroup() %>% 
+      summarise(export_value_usd = sum(export_value_usd), .groups = "drop") %>% 
       group_by(community_name2) %>% 
       mutate(
         share = round(export_value_usd/sum(export_value_usd), 2),
@@ -241,7 +248,6 @@ shinyServer(function(input, output, session) {
         )
       ) %>% 
       hc_colors("trasnparent")
-    
    
   })
   
@@ -277,8 +283,7 @@ shinyServer(function(input, output, session) {
     daux <- daux %>% 
       left_join(daux1, by = "partner_iso") %>% 
       group_by(year, partner_iso2, country_name_english2, iso22) %>% 
-      summarise(export_value_usd = sum(export_value_usd)) %>% 
-      ungroup() %>% 
+      summarise(export_value_usd = sum(export_value_usd), .groups = "drop") %>% 
       mutate(
         partner_iso2 = factor(partner_iso2, levels = unique(pull(daux1, partner_iso2))),
         country_name_english2 = factor(country_name_english2, levels = unique(pull(daux1, country_name_english2))),

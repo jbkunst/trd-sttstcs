@@ -5,8 +5,9 @@ account: jbkunst
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2049057
-bundleId: 2963129
+bundleId: 5368991
 url: https://jbkunst.shinyapps.io/trd-sttstcs/
-when: 1585898980.60759
+when: 1639439051.10469
+lastSyncTime: 1639439051.10469
 asMultiple: FALSE
 asStatic: FALSE

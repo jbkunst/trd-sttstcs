@@ -74,14 +74,14 @@ dashboardPage(
                             "With this input you can control how much historical data consider in temporal charts."
                         )
                     ),
-                    icon = icon("gear"),
+                    icon = icon("cog"),
                     tooltip = tooltipOptions(title = "Click to configure options")
                     ),
                 dropdownButtonp(
                     tags$h4("About this app"),
                     "This is an app developed by Joshua Kunst (@jbkunst) using R",
                     "The package used are shiny, shiny dashboard, tradestatiscits, highcharter among others",
-                    "URL repo: xxxxx/xxxx/xxx",
+                    "URL repo: https://github.com/jbkunst/trd-sttstcs",
                     "Licence CC0",
                     icon = icon("info"),
                     tooltip = tooltipOptions(title = "About this app")

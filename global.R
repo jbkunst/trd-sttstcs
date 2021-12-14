@@ -7,7 +7,7 @@ library(highcharter)
 library(dplyr)
 library(shinyWidgets)
 library(scales)
-
+library(DBI)
 # options(shiny.autoload.r=FALSE)
 source("R-scripts/99-shiny-helpers.R")
 
@@ -56,16 +56,25 @@ dropdownButtonp <- purrr::partial(
 
 
 # data --------------------------------------------------------------------
+dblite <- dbConnect(RSQLite::SQLite(), "data/db.sqlite")
+
 if(PARS$debug) {
-  data_yrpc <- readRDS("data/yrpc_chl.rds")
+  # data_yrpc <- readRDS("data/yrpc_chl.rds")
+  data_yrpc <- tbl(dblite, "yrpc_chl")
 } else {
   message("reading long data")
-  data_yrpc <- readRDS("data/yrpc.rds")
+  
+  # data_yrpc <- readRDS("data/yrpc.rds")
+  data_yrpc <- tbl(dblite, "yrpc")
+  
   message("long data ready!")
 } 
 
-data_yr   <- readRDS("data/yr.rds")
-data_yrc  <- readRDS("data/yrc2018.rds")
+# data_yr   <- readRDS("data/yr.rds")
+# data_yrc  <- readRDS("data/yrc2018.rds")
+
+data_yr   <- tbl(dblite, "yr")
+data_yrc  <- tbl(dblite, "yrc")
 
 communities <- readRDS("data/communities.rds")
 countries   <- readRDS("data/countries.rds")
@@ -76,9 +85,10 @@ mapwrdl <- hcmap(showInLegend = FALSE, nullColor = "#f3f6f9", borderColor = "#ed
   hc_credits(enabled = FALSE)
 
 dfsrt <- data_yr %>%
-  filter(year == max(year)) %>% 
-  arrange(desc(export_value_usd)) %>% 
+  filter(year == max(year, na.rm = TRUE)) %>% 
   select(reporter_iso, export_value_usd) %>% 
+  collect() %>% 
+  arrange(desc(export_value_usd)) %>% 
   mutate(
     aux = export_value_usd/1e6/sum(export_value_usd/1e6),
     auxcum = cumsum(aux),
